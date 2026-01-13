@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processos - JurisTrack</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/menu.css">
+    <style>
+        .btn-novo-processo { background-color: #3b82f6; color: white; border: none; }
+        .btn-novo-processo:hover { background-color: #2563eb; color: white; }
+    </style>
+</head>
+<body>
+    <div class="d-flex">
+        <app-sidebar style="display: contents;"></app-sidebar>
+    
+        <div class="flex-grow-1 p-4" style="background-color: #f8f9fa;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold text-dark">Processos</h2>
+                    <p class="text-muted mb-0">Gerencie e pesquise processos jurí­dicos</p>
+                </div>
+                <a href="/html/fichaProcesso.html" class="btn btn-novo-processo px-4 py-2">
+                    <i class="fas fa-plus me-2"></i> Novo Processo
+                </a>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4 mb-4">
+                <h5 class="mb-3 fw-bold"><i class="fas fa-search me-2 text-primary"></i>Pesquisar Processos</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label text-muted small fw-bold">Buscar por número, assunto</label>
+                        <input type="text" class="form-control bg-light" id="buscaInput" placeholder="Digite para pesquisar...">
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Situação</label>
+                        <select class="form-select bg-light" id="filtroSituacao">
+                            <option value="">Todas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label text-muted small fw-bold">Comarca</label>
+                        <select class="form-select bg-light" id="filtroComarca">
+                            <option value="">Todas</option>
+                            </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card border-0 shadow-sm p-4">
+                <h5 class="mb-3 fw-bold text-secondary"><i class="far fa-file-alt me-2"></i>Resultados (<span id="totalResultados">0</span>)</h5>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Número do Processo</th>
+                                <th>Assunto</th>
+                                <th>Autor</th>
+                                <th>Reu</th>
+                                <th class="text-center">Situação</th>
+                                <th>Comarca</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaProcessosBody">
+                            <tr><td colspan="6" class="text-center text-muted py-4">Carregando processos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/js/processoLista.js"></script>
+    <script src="/js/components/sidebar.js"></script>
+</body>
+</html>
+
+
+
