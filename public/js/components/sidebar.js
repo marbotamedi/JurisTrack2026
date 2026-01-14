@@ -19,14 +19,12 @@ class AppSidebar extends HTMLElement {
             <a class="nav-link" href="/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a class="nav-link" href="/upload"><i class="fas fa-cloud-upload-alt"></i> Upload / Inicio</a>
             <a class="nav-link" href="/processos"><i class="fas fa-gavel"></i> Processos</a>
+            <a class="nav-link" href="/similaridade"><i class="fas fa-clone"></i> Similaridade</a>
             
             <small class="text-muted text-uppercase fw-bold mt-4 mb-2 px-2" style="font-size: 0.75rem;">Cadastros</small>
         
             <a class="nav-link" href="/usuarios">
                 <i class="fas fa-users"></i> Usuários
-            </a>
-            <a class="nav-link" href="/importar-feriados">
-                <i class="fas fa-calendar-alt"></i> Cadastros de Feriados
             </a>
             <a class="nav-link" href="/gerenciarPeticao">
                 <i class="fas fa-file-contract"></i> Modelos
