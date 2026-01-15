@@ -90,10 +90,6 @@ app.get("/dashboard", (req, res) => {
   res.sendFile(path.join(__dirname, "../public", "html", "dashboard.html"));
 });
 
-app.get("/similaridade", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "html", "similaridade.html"));
-});
-
 app.get("/processos", (req, res) => {
   res.sendFile(
     path.join(__dirname, "../public", "html", "processos.html")
