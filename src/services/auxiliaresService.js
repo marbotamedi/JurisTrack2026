@@ -44,6 +44,8 @@ export const listarTabela = async (tabela) => {
   let colunaOrdenacao = "descricao";
   if (tabela === "pessoas") colunaOrdenacao = "nome";
 
+  if (tabela === "TipoAndamento") colunaOrdenacao = "descricao";
+
   // Executa a query
   // Range mantido alto, mas como o payload é leve, será rápido.
   const { data, error } = await query

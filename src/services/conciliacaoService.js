@@ -103,7 +103,7 @@ function ensureItemIsPendente(item) {
   }
 }
 
-async function ensureProcesso(client, { numero_processo, tenantId }) {
+async function ensureProcesso(client, { numero_processo, tenantId, uploadId }) {
   const existing = await client.query(
     `
       select idprocesso
@@ -119,13 +119,21 @@ async function ensureProcesso(client, { numero_processo, tenantId }) {
     return existing.rows[0].idprocesso;
   }
 
+  // Busca o link do arquivo original na tabela de uploads
+  const uploadData = await client.query(
+      `SELECT url_publica FROM "upload_Documentos" 
+    WHERE id = $1 AND tenant_id = $2`,
+      [uploadId, tenantId]
+    );
+
+  // Define um fallback caso não encontre o upload (evita o erro de NOT NULL)
+  const pastaUrl = uploadData.rows[0]?.url_publica || 'link_nao_identificado';
+
   const inserted = await client.query(
-    `
-      insert into processos (numprocesso, tenant_id)
-      values ($1, $2)
-      returning idprocesso
-    `,
-    [numero_processo, tenantId]
+    `INSERT INTO processos (numprocesso, tenant_id, pasta)
+     VALUES ($1, $2, $3)
+     RETURNING idprocesso`,
+    [numero_processo, tenantId, pastaUrl]
   );
 
   return inserted.rows[0].idprocesso;
@@ -175,6 +183,7 @@ export async function cadastrarItem({ itemId, tenantId, userId }) {
     const processoId = await ensureProcesso(client, {
       numero_processo: item.numero_processo,
       tenantId,
+      uploadId: item.upload_documento_id,
     });
 
     const textoPublicacao =
