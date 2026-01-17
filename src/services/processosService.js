@@ -46,8 +46,7 @@ export const listarProcessos = async (filtros, tenantId) => {
 
 export const obterProcessoCompleto = async (id, tenantId) => {
   const { data, error } = await withTenantFilter("processos", tenantId)
-    .select(
-      `
+    .select(`
       *,
       cidades ( idcidade, descricao, idestado ),
       comarcas ( idcomarca, descricao ),
@@ -62,26 +61,30 @@ export const obterProcessoCompleto = async (id, tenantId) => {
       partes:processo_partes ( id, tipo_parte, pessoas ( idpessoa, nome, cpf_cnpj ) ),
       advogado:pessoas!fk_processos_advogado ( idpessoa, nome ),
 
-      Publicacao (
+      Publicacao!"publicacao_processoid_fkey" (
         id,
         texto_integral,
         data_publicacao,
-        Prazo ( *, responsavel:pessoas ( nome ) ),
-        Andamento ( * ),
-        Historico_Peticoes ( * )
+        Prazo ( 
+          *, 
+          responsavel:users!Prazo_responsavelId_fkey ( nome ) 
+        ),
+        Andamento!andamento_publicacaoid_fkey ( * ),
+        Historico_Peticoes!historico_peticoes_publicacao_id_fkey ( * )
       ),
       
-      Andamento (
+      Andamento!"Andamento_processoId_fkey" (
         *,
         responsavel:pessoas!Andamento_responsavelId_fkey ( nome )
       )
-    `
-    )
+    `)
     .eq("idprocesso", id)
-    .eq("Publicacao.tenant_id", tenantId)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) {
+    console.error("ERRO SUPABASE:", error); // Verifique o terminal do VS Code/Node
+    throw error;
+  }
   return data;
 };
 

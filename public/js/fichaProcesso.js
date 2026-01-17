@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         carregarSelect("/api/auxiliares/situacoes", "id_situacao"),
         carregarSelect("/api/auxiliares/probabilidades", "id_probabilidade"),
         carregarSelect("/api/auxiliares/moedas", "id_moeda"),
+        carregarUsuariosResponsaveis(), // Nova chamada
         carregarPessoas()
     ]);
 
@@ -394,13 +395,13 @@ function renderizarPrazos(proc) {
     tbody.innerHTML = "";
 
     // Configura opções de responsável no modal
-    if (proc.advogado) {
+    /*if (proc.advogado) {
         const selectResp = document.getElementById("respPrazoManual");
         if (selectResp) selectResp.innerHTML = `<option value="${proc.advogado.idpessoa}">${proc.advogado.nome}</option>`;
 
         const selectRespAnd = document.getElementById("respAndamentoManual");
         if (selectRespAnd) selectRespAnd.innerHTML = `<option value="${proc.advogado.idpessoa}">${proc.advogado.nome}</option>`;
-    }
+    }*/
 
     const prazosEncontrados = [];
 
@@ -418,6 +419,7 @@ function renderizarPrazos(proc) {
                 listaPrazos.forEach(prazo => {
                     // Tenta identificar o responsável
                     // 1. Tenta pegar pelo join direto com a tabela pessoas (NOVO MODELO)
+                    console.log(prazo);
                     let nomeResponsavel = "Sistema";
 
                     if (prazo.responsavel && prazo.responsavel.nome) {
@@ -607,10 +609,9 @@ function renderizarAndamentos(proc) {
 }
 
 window.abrirModalAndamento = function () {
-    const selectOrigem = document.getElementById("id_advogado");
-    const selectDestino = document.getElementById("respAndamentoManual");
-    if (selectOrigem && selectDestino) selectDestino.innerHTML = selectOrigem.innerHTML;
     document.getElementById("dataAndamentoManual").valueAsDate = new Date();
+    document.getElementById("descAndamentoManual").value = "";
+    document.getElementById("respAndamentoManual").value = ""; // Opcional: deixar vazio para seleção forçada
     new bootstrap.Modal(document.getElementById("modalNovoAndamento")).show();
 };
 
@@ -842,12 +843,12 @@ function bloquearEdicao() {
 // --- FUNÇÕES DE PRAZO MANUAL (Adicionadas no final para garantir carregamento) ---
 window.abrirModalPrazo = function () {
     // Copia opções de advogados para o select de responsáveis do prazo
-    const selectOrigem = document.getElementById("id_advogado");
+   /* const selectOrigem = document.getElementById("id_advogado");
     const selectDestino = document.getElementById("respPrazoManual");
 
     if (selectOrigem && selectDestino) {
         selectDestino.innerHTML = selectOrigem.innerHTML;
-    }
+    }*/
 
     // Limpa campos e define valor padrão
     document.getElementById("descPrazoManual").value = "";
@@ -860,10 +861,11 @@ window.abrirModalPrazo = function () {
 };
 
 window.salvarPrazoManual = async function () {
+    const responsavelId = document.getElementById("respPrazoManual").value;
     const idProcesso = document.getElementById("IdProcesso").value;
     const descricao = document.getElementById("descPrazoManual").value;
     const dataLimite = document.getElementById("dataPrazoManual").value;
-    const responsavelId = document.getElementById("respPrazoManual").value;
+    
 
     if (!descricao || !dataLimite) {
         alert("Descrição e Data de Vencimento são obrigatórios!");
@@ -908,3 +910,32 @@ window.salvarPrazoManual = async function () {
         if (btnSalvar) btnSalvar.disabled = false;
     }
 };
+
+async function carregarUsuariosResponsaveis() {
+    try {
+        // Busca os usuários do mesmo tenant
+        const res = await authFetch("/api/users"); 
+        const usuarios = await res.json();
+       
+        
+        // Seleciona os dropdowns de responsáveis (Prazos e Andamentos)
+        const selects = [
+            document.getElementById("respPrazoManual"),
+            document.getElementById("respAndamentoManual")
+        ];
+
+        selects.forEach(select => {
+            if (select) {
+                select.innerHTML = '<option value="">Selecione um responsável...</option>';
+                usuarios.forEach(user => {
+                    const opt = document.createElement("option");
+                    opt.value = user.id;  
+                    opt.textContent = (user.nome && user.nome.trim() !== "") ? user.nome : user.email;
+                    select.appendChild(opt);
+                });
+            }
+        });
+    } catch (e) {
+        console.error("Erro ao carregar usuários do tenant:", e);
+    }
+}
